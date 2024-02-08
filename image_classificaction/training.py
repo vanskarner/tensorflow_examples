@@ -3,17 +3,19 @@ import math
 import matplotlib.pyplot as plt
 import tensorflow as tf
 import tensorflow_datasets as tfds
+from typing import cast
 
 # Datos para entrenamiento
 data, metadata = tfds.load('fashion_mnist', as_supervised=True, with_info=True)
-data_train = data['train']
-label_train = metadata.features['label'].names
+data_train = cast(tf.data.Dataset, data['train'])
+label_train = cast(list[str], metadata.features['label'].names)
 
 
 def normalice(image, label):
     image = tf.cast(image, tf.float32)
     image /= 255
     return image, label
+
 
 data_train = data_train.map(normalice)
 data_train = data_train.cache()
@@ -22,7 +24,7 @@ data_train = data_train.cache()
 entry_layer = tf.keras.layers.Flatten(input_shape=(28, 28, 1))
 hidden_layer1 = tf.keras.layers.Dense(units=50, activation=tf.nn.relu)
 hidden_layer2 = tf.keras.layers.Dense(units=50, activation=tf.nn.relu)
-output_layer = tf.keras.layers.Dense(10, activation=tf.nn.softmax)
+output_layer = tf.keras.layers.Dense(units=10, activation=tf.nn.softmax)
 layers = [entry_layer, hidden_layer1, hidden_layer2, output_layer]
 
 # Creación del modelo a partir de las capas
