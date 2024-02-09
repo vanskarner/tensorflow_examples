@@ -5,7 +5,7 @@ import tensorflow as tf
 import tensorflow_datasets as tfds
 from typing import cast
 
-# Datos para entrenamiento
+# Preparación de data
 data, metadata = tfds.load('fashion_mnist', as_supervised=True, with_info=True)
 data_train = cast(tf.data.Dataset, data['train'])
 label_train = cast(list[str], metadata.features['label'].names)
@@ -20,14 +20,14 @@ def normalice(image, label):
 data_train = data_train.map(normalice)
 data_train = data_train.cache()
 
-# Creación de capas
+# Preparación de capas
 entry_layer = tf.keras.layers.Flatten(input_shape=(28, 28, 1))
 hidden_layer1 = tf.keras.layers.Dense(units=50, activation=tf.nn.relu)
 hidden_layer2 = tf.keras.layers.Dense(units=50, activation=tf.nn.relu)
 output_layer = tf.keras.layers.Dense(units=10, activation=tf.nn.softmax)
 layers = [entry_layer, hidden_layer1, hidden_layer2, output_layer]
 
-# Creación del modelo a partir de las capas
+# Preparación del modelo
 model = tf.keras.Sequential(layers=layers, name="clothing_classifier")
 model.compile(
     optimizer=tf.optimizers.Adam(),
@@ -40,7 +40,7 @@ data_train = data_train.repeat().shuffle(num_examples).batch(lot_size)
 training_result = model.fit(
     data_train, epochs=7, steps_per_epoch=math.ceil(num_examples/lot_size))
 
-# Guardar el modelo
+# Guardar modelo
 path = os.path.dirname(os.path.abspath(__file__))
 MODEL_NAME = "ClothingClassifier.keras"
 filepath = os.path.join(path, MODEL_NAME)
