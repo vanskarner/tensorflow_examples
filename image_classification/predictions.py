@@ -19,7 +19,6 @@ def normalizar(imagenes, etiquetas):
 
 data_test = data_test.map(normalizar)
 data_test = data_test.cache()
-num_ej_pruebas = metadata.splits["test"].num_examples
 TAMANO_LOTE = 32
 data_test = data_test.batch(TAMANO_LOTE)
 
@@ -30,12 +29,14 @@ filepath = os.path.join(path, MODEL_NAME)
 model: tf.keras.Sequential = tf.keras.models.load_model(filepath=filepath)
 
 # Ejecución de predicciones
-imagenes_prueba, etiquetas_prueba = next(iter(data_test))
-imagenes_prueba = imagenes_prueba.numpy()
-etiquetas_prueba = etiquetas_prueba.numpy()
-predicciones = model.predict(imagenes_prueba)
+for imagenes_prueba, etiquetas_prueba in data_test.take(1):
+    imagenes_prueba = imagenes_prueba.numpy()
+    etiquetas_prueba = etiquetas_prueba.numpy()
+    predicciones = model.predict(imagenes_prueba)
 
 # ------------ Gráfica de la predicción ------------
+
+
 def graficar_imagen(i, arr_predicciones, etiquetas_reales, imagenes):
     arr_predicciones, etiqueta_real, img = arr_predicciones[i], etiquetas_reales[i], imagenes[i]
     plt.grid(False)
@@ -68,6 +69,10 @@ def graficar_valor_arreglo(i, arr_predicciones, etiqueta_real):
     grafica[etiqueta_prediccion].set_color('red')
     grafica[etiqueta_real].set_color('blue')
 
+
+figsize = [5, 5]
+predicciones = predicciones
+etiquetas_prueba = etiquetas_prueba
 
 filas = 5
 columnas = 5
