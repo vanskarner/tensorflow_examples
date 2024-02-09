@@ -7,7 +7,7 @@ import tensorflow as tf
 celsius_test = [-50, -28, 5, 35, 100]
 fahrenheit_test = [-58, -18.4, 41, 95, 212]
 
-# Carga modelo guardado
+# Carga de modelo guardado
 path = os.path.dirname(os.path.abspath(__file__))
 MODEL_NAME = "CelToFah.keras"
 filepath = os.path.join(path, MODEL_NAME)
