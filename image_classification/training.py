@@ -11,13 +11,13 @@ data_train = cast(tf.data.Dataset, data['train'])
 label_train = cast(list[str], metadata.features['label'].names)
 
 
-def normalice(image, label):
+def normalize(image, label):
     image = tf.cast(image, tf.float32)
     image /= 255
     return image, label
 
 
-data_train = data_train.map(normalice)
+data_train = data_train.map(normalize)
 data_train = data_train.cache()
 
 # Preparación de capas

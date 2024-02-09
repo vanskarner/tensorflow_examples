@@ -11,16 +11,13 @@ data_test = cast(tf.data.Dataset, data['test'])
 categories_tests = cast(list[str], metadata.features['label'].names)
 
 
-def normalizar(imagenes, etiquetas):
-    imagenes = tf.cast(imagenes, tf.float32)
-    imagenes /= 255
-    return imagenes, etiquetas
+def normalize(image, label):
+    image = tf.cast(image, tf.float32)
+    image /= 255
+    return image, label
 
-
-data_test = data_test.map(normalizar)
-data_test = data_test.cache()
-TAMANO_LOTE = 25
-data_test = data_test.batch(TAMANO_LOTE)
+lot_size = 25
+data_test = data_test.map(normalize).batch(lot_size)
 
 # Carga de modelo guardado
 path = os.path.dirname(os.path.abspath(__file__))
@@ -30,10 +27,10 @@ model: tf.keras.Sequential = tf.keras.models.load_model(filepath=filepath)
 
 # Ejecución de predicciones
 firstBatch = next(iter(data_test))
-imagenes_prueba, etiquetas_prueba = firstBatch
-imagenes_prueba = imagenes_prueba.numpy()
-etiquetas_prueba = etiquetas_prueba.numpy()
-predicciones = model.predict(imagenes_prueba)
+images_test, labels_test = firstBatch
+images_test = images_test.numpy()
+labels_test = labels_test.numpy()
+predicctions = model.predict(images_test)
 
 # ------------ Gráfica de la predicción ------------
 
@@ -72,8 +69,8 @@ def graficar_valor_arreglo(i, arr_predicciones, etiqueta_real):
 
 
 figsize = [5, 5]
-predicciones = predicciones
-etiquetas_prueba = etiquetas_prueba
+predicctions = predicctions
+labels_test = labels_test
 
 filas = 5
 columnas = 5
@@ -81,7 +78,7 @@ num_imagenes = filas*columnas
 plt.figure(figsize=(2*2*columnas, 2*filas))
 for i in range(num_imagenes):
     plt.subplot(filas, 2*columnas, 2*i+1)
-    graficar_imagen(i, predicciones, etiquetas_prueba, imagenes_prueba)
+    graficar_imagen(i, predicctions, labels_test, images_test)
     plt.subplot(filas, 2*columnas, 2*i+2)
-    graficar_valor_arreglo(i, predicciones, etiquetas_prueba)
+    graficar_valor_arreglo(i, predicctions, labels_test)
 plt.show()
