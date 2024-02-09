@@ -3,17 +3,17 @@ import os
 import matplotlib.pyplot as plt
 import tensorflow as tf
 
-# Data para entrenamiento
+# Preparación de data
 celsius_train = [-40, -10, 0, 8, 15, 22]
 fahrenheit_train = [-40, 14, 32, 46.4, 59, 71.6]
 
-# Creacion de capas
+# Preparación de capas
 entry_layer = tf.keras.layers.Flatten(input_shape=[1])
 hidden_layer1 = tf.keras.layers.Dense(units=3)
 hidden_layer2 = tf.keras.layers.Dense(units=3)
 output_layer = tf.keras.layers.Dense(units=1)
 
-# Creacion del Modelo a partir de las capas
+# Preparación del modelo
 layers = [entry_layer, hidden_layer1, hidden_layer2, output_layer]
 model = tf.keras.Sequential(layers, name='celsius_fahrenheit')
 model.compile(
@@ -32,7 +32,7 @@ MODEL_NAME = "CelToFah.keras"
 filepath = os.path.join(path, MODEL_NAME)
 model.save(filepath=filepath)
 
-# ------------ Grafica del entrenamiento ------------
+# ------------ Gráfica del entrenamiento ------------
 plt.title('Evolución de la pérdida durante el entrenamiento')
 plt.xlabel('# Epocas')
 plt.ylabel('# Magnitud de perdida')
