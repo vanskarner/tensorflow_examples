@@ -19,7 +19,7 @@ def normalizar(imagenes, etiquetas):
 
 data_test = data_test.map(normalizar)
 data_test = data_test.cache()
-TAMANO_LOTE = 32
+TAMANO_LOTE = 25
 data_test = data_test.batch(TAMANO_LOTE)
 
 # Carga de modelo guardado
@@ -29,10 +29,11 @@ filepath = os.path.join(path, MODEL_NAME)
 model: tf.keras.Sequential = tf.keras.models.load_model(filepath=filepath)
 
 # Ejecución de predicciones
-for imagenes_prueba, etiquetas_prueba in data_test.take(1):
-    imagenes_prueba = imagenes_prueba.numpy()
-    etiquetas_prueba = etiquetas_prueba.numpy()
-    predicciones = model.predict(imagenes_prueba)
+firstBatch = next(iter(data_test))
+imagenes_prueba, etiquetas_prueba = firstBatch
+imagenes_prueba = imagenes_prueba.numpy()
+etiquetas_prueba = etiquetas_prueba.numpy()
+predicciones = model.predict(imagenes_prueba)
 
 # ------------ Gráfica de la predicción ------------
 
