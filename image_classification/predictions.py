@@ -1,23 +1,19 @@
+""" Predicciones del modelo de clasificación de ropa """
 import os
 from typing import cast
-import tensorflow as tf
-import tensorflow_datasets as tfds
 import matplotlib.pyplot as plt
 import numpy as np
+import tensorflow as tf
+import tensorflow_datasets as tfds # pylint: disable=C0411
 
 # Preparación de data
 data, metadata = tfds.load('fashion_mnist', as_supervised=True, with_info=True)
 data_test = cast(tf.data.Dataset, data['test'])
 categories_tests = cast(list[str], metadata.features['label'].names)
-
-
-def normalize(image, label):
-    image = tf.cast(image, tf.float32)
-    image /= 255
-    return image, label
-
-lot_size = 25
-data_test = data_test.map(normalize).batch(lot_size)
+LOTSIZE = 25
+data_test = data_test.map(
+    map_func=lambda image, label: (tf.cast(image, tf.float32)/255, label)
+).batch(LOTSIZE)
 
 # Carga de modelo guardado
 path = os.path.dirname(os.path.abspath(__file__))
@@ -33,52 +29,38 @@ labels_test = labels_test.numpy()
 predicctions = model.predict(images_test)
 
 # ------------ Gráfica de la predicción ------------
-
-
-def graficar_imagen(i, arr_predicciones, etiquetas_reales, imagenes):
-    arr_predicciones, etiqueta_real, img = arr_predicciones[i], etiquetas_reales[i], imagenes[i]
+ROWS = 5
+COLUMNS = 5
+NUM_IMAGES = ROWS*COLUMNS
+plt.figure(figsize=(2*2*COLUMNS, 2*ROWS))
+plt.suptitle('Resultado de predicciones')
+for i in range(NUM_IMAGES):
+    # Gráfico de la imagen y etiquetas
+    plt.subplot(ROWS, 2*COLUMNS, 2*i+1)
+    prediction, real_label, img = predicctions[i], labels_test[i], images_test[i]
     plt.grid(False)
     plt.xticks([])
     plt.yticks([])
-
     plt.imshow(img[..., 0], cmap=plt.get_cmap('binary'))
+    predicted_label = np.argmax(prediction)
+    COLOR = 'blue' if predicted_label == real_label else 'red'
+    xlabel = (f"{categories_tests[predicted_label]} "
+              f"{100*np.max(prediction):2.0f}% "
+              f"({categories_tests[real_label]})")
+    plt.xlabel(xlabel=xlabel, color=COLOR)
 
-    etiqueta_prediccion = np.argmax(arr_predicciones)
-    if etiqueta_prediccion == etiqueta_real:
-        color = 'blue'
-    else:
-        color = 'red'
-
-    plt.xlabel("{} {:2.0f}% ({})".format(categories_tests[etiqueta_prediccion],
-                                         100*np.max(arr_predicciones),
-                                         categories_tests[etiqueta_real]),
-               color=color)
-
-
-def graficar_valor_arreglo(i, arr_predicciones, etiqueta_real):
-    arr_predicciones, etiqueta_real = arr_predicciones[i], etiqueta_real[i]
+    # Gráfico de barras del arreglo de valores
+    plt.subplot(ROWS, 2*COLUMNS, 2*i+2)
     plt.grid(False)
     plt.xticks([])
     plt.yticks([])
-    grafica = plt.bar(range(10), arr_predicciones, color="#777777")
+    bar_plot = plt.bar(range(10), prediction, color="#777777")
     plt.ylim([0, 1])
-    etiqueta_prediccion = np.argmax(arr_predicciones)
+    bar_plot[predicted_label].set_color('red')
+    bar_plot[real_label].set_color('blue')
+    # Agregar valores a las barras solo para predicted_label y real_label
+    for j, val in enumerate(prediction):
+        if j == predicted_label or j == real_label:
+            plt.text(j, val, f'{val:.2f}', ha='center', va='bottom', color='black')
 
-    grafica[etiqueta_prediccion].set_color('red')
-    grafica[etiqueta_real].set_color('blue')
-
-
-figsize = [5, 5]
-predicctions = predicctions
-labels_test = labels_test
-
-filas = 5
-columnas = 5
-num_imagenes = filas*columnas
-plt.figure(figsize=(2*2*columnas, 2*filas))
-for i in range(num_imagenes):
-    plt.subplot(filas, 2*columnas, 2*i+1)
-    graficar_imagen(i, predicctions, labels_test, images_test)
-    plt.subplot(filas, 2*columnas, 2*i+2)
-    graficar_valor_arreglo(i, predicctions, labels_test)
 plt.show()

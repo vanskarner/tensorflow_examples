@@ -1,4 +1,4 @@
-""" Predicciones del modelo guardado de conversion de Celsius a Fahrenheit"""
+""" Predicciones del modelo de conversión de Celsius a Fahrenheit"""
 import os
 import matplotlib.pyplot as plt
 import tensorflow as tf

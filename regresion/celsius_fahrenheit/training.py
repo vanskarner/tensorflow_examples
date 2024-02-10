@@ -1,4 +1,4 @@
-""" Entrenamiento del modelo para la conversión de Celsius a Fahrenheit """
+""" Entrenamiento del modelo de conversión de Celsius a Fahrenheit """
 import os
 import matplotlib.pyplot as plt
 import tensorflow as tf

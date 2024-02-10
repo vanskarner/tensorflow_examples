@@ -1,23 +1,18 @@
+""" Entrenamiento del modelo de clasificación de ropa """
 import os
 import math
+from typing import cast
 import matplotlib.pyplot as plt
 import tensorflow as tf
-import tensorflow_datasets as tfds
-from typing import cast
+import tensorflow_datasets as tfds # pylint: disable=C0411
 
 # Preparación de data
 data, metadata = tfds.load('fashion_mnist', as_supervised=True, with_info=True)
 data_train = cast(tf.data.Dataset, data['train'])
 label_train = cast(list[str], metadata.features['label'].names)
-
-
-def normalize(image, label):
-    image = tf.cast(image, tf.float32)
-    image /= 255
-    return image, label
-
-
-data_train = data_train.map(normalize)
+data_train = data_train.map(
+    map_func=lambda image, label: (tf.cast(image, tf.float32)/255, label)
+)
 data_train = data_train.cache()
 
 # Preparación de capas
@@ -35,10 +30,10 @@ model.compile(
     metrics=['accuracy']
 )
 num_examples = metadata.splits["train"].num_examples
-lot_size = 32
-data_train = data_train.repeat().shuffle(num_examples).batch(lot_size)
-training_result = model.fit(
-    data_train, epochs=7, steps_per_epoch=math.ceil(num_examples/lot_size))
+LOTSIZE = 32
+data_train = data_train.repeat().shuffle(num_examples).batch(LOTSIZE)
+TRAINING_RESULT = model.fit(
+    data_train, epochs=7, steps_per_epoch=math.ceil(num_examples/LOTSIZE))
 
 # Guardar modelo
 path = os.path.dirname(os.path.abspath(__file__))
@@ -50,5 +45,5 @@ model.save(filepath=filepath)
 plt.title('Evolución de la pérdida durante el entrenamiento')
 plt.xlabel("# Época")
 plt.ylabel("Magnitud de pérdida")
-plt.plot(training_result.history["loss"])
+plt.plot(TRAINING_RESULT.history["loss"])
 plt.show()
