@@ -13,13 +13,13 @@ Se actualiza regularmente para incluir nuevos ejemplos y mejoras.
 <details>
 <summary>Entrenamiento</summary>
 
-![alt text](Figure_1.png)
+![alt text](regresion/celsius_fahrenheit/Figure_Training.png)
 </details>
 
 <details>
 <summary>Predicciones</summary>
 
-![alt text](Figure_2.png)
+![alt text](regresion/celsius_fahrenheit/Figure_Predictions.png)
 </details>
 
 ## Clasificación
@@ -28,11 +28,11 @@ Se actualiza regularmente para incluir nuevos ejemplos y mejoras.
 <details>
 <summary>Entrenamiento</summary>
 
-![alt text](Figure_3.png)
+![alt text](classification/clothes/Figure_Training.png)
 </details>
 
 <details>
 <summary>Predicciones</summary>
 
-![alt text](Figure_4.png)
+![alt text](classification/clothes/Figure_Predictions.png)
 </details>
