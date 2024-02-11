@@ -1,7 +1,7 @@
 # Ejemplos de TensorFlow
 Conjunto de varios ejemplos simplificados sobre el uso tensorflow en cuestión de entrenamiento y predicción. Se actualizará regularmente para incluir nuevos ejemplos y mejoras.
 
-<video controls src="example_tensorflow_lite.mp4" title="Title"></video>
+[example_tensorflow_high.webm](https://github.com/vanskarner/tensorflow_examples/assets/39975255/1756c542-c289-4849-a3fe-a8341b73c133)
 
 # Motivación
 Proporcionar una colección de ejemplos simplificados de TensorFlow que sirvan a modo de consulta para aquellos que deseen aprender o trabajar con esta potente biblioteca de aprendizaje automático. 
