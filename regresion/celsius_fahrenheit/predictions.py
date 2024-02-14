@@ -21,6 +21,8 @@ plt.figure(figsize=(8, 6))
 plt.title('Datos de prueba y predicciones del modelo')
 plt.plot(celsius_test, fahrenheit_test, 'g-', label='Datos de prueba')
 plt.plot(celsius_test, predictions, 'b-', label='Predicciones')
+plt.xlim(21.44, 21.58)  # Limitamos el eje x
+plt.ylim(70.64, 70.80)  # Limitamos el eje y
 plt.xlabel('Celsius')
 plt.ylabel('Fahrenheit')
 plt.legend()
