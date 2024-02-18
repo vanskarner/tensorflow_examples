@@ -24,18 +24,10 @@ layer5 = tf.keras.layers.Conv2D(64, (3, 3), activation='relu')
 layer6 = tf.keras.layers.Flatten()
 layer7 = tf.keras.layers.Dense(64, activation='relu')
 layer8 = tf.keras.layers.Dense(10)
+layers = [layer1, layer2, layer3, layer4, layer5, layer6, layer7, layer8]
 
 # Preparación del modelo
-model = tf.keras.models.Sequential(name='CIFAR10_Model')
-model.add(layer1)
-model.add(layer2)
-model.add(layer3)
-model.add(layer4)
-model.add(layer5)
-model.summary()
-model.add(layer6)
-model.add(layer7)
-model.add(layer8)
+model = tf.keras.models.Sequential(layers=layers, name='CIFAR10_Model')
 model.summary()
 model.compile(optimizer='adam',
               loss=tf.keras.losses.SparseCategoricalCrossentropy(
@@ -61,4 +53,5 @@ plt.legend(loc='lower right')
 
 # 313/313 - 3s - loss: 0.8766 - accuracy: 0.7078 - 3s/epoch - 8ms/step
 # 313/313 - 2s - loss: 0.8487 - accuracy: 0.7246 - 2s/epoch - 6ms/step
+# 313/313 - 2s - loss: 0.8808 - accuracy: 0.7056 - 2s/epoch - 7ms/step
 test_loss, test_acc = model.evaluate(test_images,  test_labels, verbose=2)
