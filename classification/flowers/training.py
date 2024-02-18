@@ -4,13 +4,10 @@ import matplotlib.pyplot as plt
 import tensorflow as tf
 
 # Preparación de data
-(train_images, train_labels), (test_images,
-                               test_labels) = tf.keras.datasets.cifar10.load_data()
-
-# Normalize pixel values to be between 0 and 1
+data_train, data_test = tf.keras.datasets.cifar10.load_data()
+train_images, train_labels = data_train
+test_images, test_labels = data_test
 train_images, test_images = train_images / 255.0, test_images / 255.0
-
-# Verifica los datos
 class_names = ['airplane', 'automobile', 'bird', 'cat', 'deer',
                'dog', 'frog', 'horse', 'ship', 'truck']
 
@@ -29,7 +26,7 @@ layers = [layer1, layer2, layer3, layer4, layer5, layer6, layer7, layer8]
 # Preparación del modelo
 model = tf.keras.models.Sequential(layers=layers, name='CIFAR10_Model')
 model.summary()
-model.compile(optimizer='adam',
+model.compile(optimizer=tf.optimizers.Adam(),
               loss=tf.keras.losses.SparseCategoricalCrossentropy(
                   from_logits=True),
               metrics=['accuracy'])
@@ -50,8 +47,6 @@ plt.xlabel('Epoch')
 plt.ylabel('Accuracy')
 plt.ylim([0.5, 1])
 plt.legend(loc='lower right')
+plt.show()
 
-# 313/313 - 3s - loss: 0.8766 - accuracy: 0.7078 - 3s/epoch - 8ms/step
-# 313/313 - 2s - loss: 0.8487 - accuracy: 0.7246 - 2s/epoch - 6ms/step
-# 313/313 - 2s - loss: 0.8808 - accuracy: 0.7056 - 2s/epoch - 7ms/step
 test_loss, test_acc = model.evaluate(test_images,  test_labels, verbose=2)
