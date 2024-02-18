@@ -30,8 +30,9 @@ model.compile(optimizer=tf.optimizers.Adam(),
               loss=tf.keras.losses.SparseCategoricalCrossentropy(
                   from_logits=True),
               metrics=['accuracy'])
-HISTORY = model.fit(train_images, train_labels, epochs=10,
+HISTORY = model.fit(x=train_images, y=train_labels, epochs=10,
                     validation_data=(test_images, test_labels))
+model.evaluate(test_images,  test_labels, verbose=2)
 
 # Guardar modelo
 path = os.path.dirname(os.path.abspath(__file__))
@@ -40,7 +41,6 @@ filepath = os.path.join(path, MODEL_NAME)
 model.save(filepath=filepath)
 
 # ------------ Gráfica del entrenamiento ------------
-# Evaluar el modelo
 plt.plot(HISTORY.history['accuracy'], label='accuracy')
 plt.plot(HISTORY.history['val_accuracy'], label='val_accuracy')
 plt.xlabel('Epoch')
@@ -48,5 +48,3 @@ plt.ylabel('Accuracy')
 plt.ylim([0.5, 1])
 plt.legend(loc='lower right')
 plt.show()
-
-test_loss, test_acc = model.evaluate(test_images,  test_labels, verbose=2)
