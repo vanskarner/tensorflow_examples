@@ -41,10 +41,17 @@ filepath = os.path.join(path, MODEL_NAME)
 model.save(filepath=filepath)
 
 # ------------ Gráfica del entrenamiento ------------
+# Gráfico 1
 plt.plot(HISTORY.history['accuracy'], label='accuracy')
 plt.plot(HISTORY.history['val_accuracy'], label='val_accuracy')
 plt.xlabel('Epoch')
 plt.ylabel('Accuracy')
 plt.ylim([0.5, 1])
 plt.legend(loc='lower right')
+plt.show()
+
+# Gráfico 2
+plt.xlabel("# Época")
+plt.ylabel("Magnitud de pérdida")
+plt.plot(HISTORY.history["loss"])
 plt.show()
