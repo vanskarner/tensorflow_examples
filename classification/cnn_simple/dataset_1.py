@@ -14,9 +14,8 @@ first_label = categories[first_label_index]
 
 plt.suptitle('First Image')
 plt.imshow(X=first_image)
-plt.xticks([])
-plt.yticks([])
 plt.xlabel(xlabel=first_label)
+plt.colorbar()
 plt.grid(False)
 plt.show()
 
