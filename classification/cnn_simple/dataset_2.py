@@ -1,4 +1,7 @@
-""" Visualización de los datos """
+"""
+Visualización de los datos
+Segunda forma usando tensorflow_datasets
+"""
 from typing import cast
 import matplotlib.pyplot as plt
 import tensorflow_datasets as tfds
@@ -7,16 +10,15 @@ import tensorflow as tf
 data, metadata = tfds.load(
     name='cifar10',
     as_supervised=True,
-    with_info=True,
-    download=False)
+    with_info=True)
 train_data = cast(tf.data.Dataset, data['train'])
 categories = metadata.features['label'].names
 
 # ------------ Mostrar primer elemento ------------
 plt.suptitle('First Image')
-for first_image, first_label_index in train_data.take(1):
-    plt.imshow(X=first_image)
-    plt.xlabel(xlabel=categories[first_label_index])
+for image, label_index in train_data.take(1):
+    plt.imshow(X=image)
+    plt.xlabel(xlabel=categories[label_index])
     plt.colorbar()
     plt.grid(False)
     plt.show()
