@@ -39,7 +39,7 @@ model.evaluate(test_images,  test_labels, verbose=2)
 
 # Guardar modelo
 path = os.path.dirname(os.path.abspath(__file__))
-MODEL_NAME = "CIFAR10_Model.keras"
+MODEL_NAME = "CIFAR10_Model1.keras"
 filepath = os.path.join(path, MODEL_NAME)
 model.save(filepath=filepath)
 

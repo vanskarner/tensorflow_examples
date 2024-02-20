@@ -10,17 +10,25 @@ import tensorflow as tf
 
 # Preparación de data
 data, metadata = tfds.load(
-    name='cifar10',
+    'cifar10',
     as_supervised=True,
     with_info=True)
 train_data = cast(tf.data.Dataset, data['train'])
 test_data = cast(tf.data.Dataset, data['test'])
-train_data.map(
-    map_func=lambda image, label: (tf.cast(image, tf.float32)/255, label)
-)
-test_data.map(
-    map_func=lambda image, label: (tf.cast(image, tf.float32)/255, label)
-)
+categories = metadata.features['label'].names
+
+
+def normalize_image(image, label):
+    """ Normalizacion de datos """
+    return tf.cast(image, tf.float32) / 255.0, label
+
+
+train_data = train_data.map(normalize_image)
+test_data = test_data.map(normalize_image)
+BATCH_SIZE = 64
+train_data = train_data.cache().shuffle(1000).batch(
+    BATCH_SIZE).prefetch(buffer_size=tf.data.experimental.AUTOTUNE)
+test_data = test_data.cache().batch(BATCH_SIZE)
 
 # Preparación de capas
 layer1 = tf.keras.layers.Conv2D(
@@ -41,17 +49,21 @@ model.compile(optimizer=tf.optimizers.Adam(),
               loss=tf.keras.losses.SparseCategoricalCrossentropy(
                   from_logits=True),
               metrics=['accuracy'])
-HISTORY = model.fit(train_data, epochs=1,
+
+# Entrenamiento del modelo
+HISTORY = model.fit(train_data, epochs=10,
                     validation_data=test_data)
+
+# Evaluación del modelo
 model.evaluate(test_data, verbose=2)
 
-# Guardar modelo
+# Guardar el modelo
 path = os.path.dirname(os.path.abspath(__file__))
-MODEL_NAME = "CIFAR10_Model.keras"
+MODEL_NAME = "CIFAR10_Model2.keras"
 filepath = os.path.join(path, MODEL_NAME)
 model.save(filepath=filepath)
 
-# ------------ Gráfica del entrenamiento ------------
+# Gráficos de entrenamiento
 # Gráfico 1
 plt.plot(HISTORY.history['accuracy'], label='accuracy')
 plt.plot(HISTORY.history['val_accuracy'], label='val_accuracy')
