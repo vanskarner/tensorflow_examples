@@ -3,15 +3,19 @@ Entrenamiento del modelo
 Primera forma usando solo el datasets de tensorflow
 """
 import os
+from typing import cast
 import matplotlib.pyplot as plt
 import tensorflow_datasets as tfds
 import tensorflow as tf
 
 # Preparación de data
-train_data, test_data = tfds.load(
+data, metadata = tfds.load(
     'cifar10',
-    split=['train', 'test'],
-    as_supervised=True)
+    as_supervised=True,
+    with_info=True)
+train_data = cast(tf.data.Dataset, data['train'])
+test_data = cast(tf.data.Dataset, data['test'])
+categories = metadata.features['label'].names
 
 
 def normalize_image(image, label):
@@ -21,6 +25,10 @@ def normalize_image(image, label):
 
 train_data = train_data.map(normalize_image)
 test_data = test_data.map(normalize_image)
+BATCH_SIZE = 64
+train_data = train_data.cache().shuffle(1000).batch(
+    BATCH_SIZE).prefetch(buffer_size=tf.data.experimental.AUTOTUNE)
+test_data = test_data.cache().batch(BATCH_SIZE)
 
 # Preparación de capas
 layer1 = tf.keras.layers.Conv2D(
@@ -43,11 +51,11 @@ model.compile(optimizer=tf.optimizers.Adam(),
               metrics=['accuracy'])
 
 # Entrenamiento del modelo
-HISTORY = model.fit(train_data.batch(32), epochs=2,
-                    validation_data=test_data.batch(32))
+HISTORY = model.fit(train_data, epochs=2,
+                    validation_data=test_data)
 
 # Evaluación del modelo
-model.evaluate(test_data.batch(32), verbose=2)
+model.evaluate(test_data, verbose=2)
 
 # Guardar el modelo
 path = os.path.dirname(os.path.abspath(__file__))
