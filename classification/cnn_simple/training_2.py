@@ -1,15 +1,26 @@
-""" Entrenamiento del modelo """
+"""
+Entrenamiento del modelo
+Primera forma usando solo el datasets de tensorflow
+"""
 import os
+from typing import cast
 import matplotlib.pyplot as plt
+import tensorflow_datasets as tfds
 import tensorflow as tf
 
 # Preparación de data
-data_train, data_test = tf.keras.datasets.cifar10.load_data()
-train_images, train_labels = data_train
-test_images, test_labels = data_test
-train_images, test_images = train_images / 255.0, test_images / 255.0
-class_names = ['airplane', 'automobile', 'bird', 'cat', 'deer',
-               'dog', 'frog', 'horse', 'ship', 'truck']
+data, metadata = tfds.load(
+    name='cifar10',
+    as_supervised=True,
+    with_info=True)
+train_data = cast(tf.data.Dataset, data['train'])
+test_data = cast(tf.data.Dataset, data['test'])
+train_data.map(
+    map_func=lambda image, label: (tf.cast(image, tf.float32)/255, label)
+)
+test_data.map(
+    map_func=lambda image, label: (tf.cast(image, tf.float32)/255, label)
+)
 
 # Preparación de capas
 layer1 = tf.keras.layers.Conv2D(
@@ -30,9 +41,9 @@ model.compile(optimizer=tf.optimizers.Adam(),
               loss=tf.keras.losses.SparseCategoricalCrossentropy(
                   from_logits=True),
               metrics=['accuracy'])
-HISTORY = model.fit(x=train_images, y=train_labels, epochs=10,
-                    validation_data=(test_images, test_labels))
-model.evaluate(test_images,  test_labels, verbose=2)
+HISTORY = model.fit(train_data, epochs=1,
+                    validation_data=test_data)
+model.evaluate(test_data, verbose=2)
 
 # Guardar modelo
 path = os.path.dirname(os.path.abspath(__file__))
