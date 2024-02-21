@@ -12,15 +12,15 @@ entry_layer = tf.keras.layers.Flatten(input_shape=[1])
 hidden_layer1 = tf.keras.layers.Dense(units=3)
 hidden_layer2 = tf.keras.layers.Dense(units=3)
 output_layer = tf.keras.layers.Dense(units=1)
+layers = [entry_layer, hidden_layer1, hidden_layer2, output_layer]
 
 # Preparación del modelo
-layers = [entry_layer, hidden_layer1, hidden_layer2, output_layer]
 model = tf.keras.Sequential(layers, name='celsius_fahrenheit')
 model.compile(
     optimizer=tf.optimizers.Adam(0.09),
     loss=tf.losses.MeanSquaredError()
 )
-TRAINING_RESULT: tf.keras.callbacks.History = model.fit(
+history: tf.keras.callbacks.History = model.fit(
     x=celsius_train,
     y=fahrenheit_train,
     epochs=150,
@@ -33,8 +33,7 @@ filepath = os.path.join(path, MODEL_NAME)
 model.save(filepath=filepath)
 
 # ------------ Gráfica del entrenamiento ------------
-plt.title('Evolución de la pérdida durante el entrenamiento')
 plt.xlabel('# Epocas')
-plt.ylabel('# Magnitud de perdida')
-plt.plot(TRAINING_RESULT.history['loss'])
+plt.ylabel('# Magnitud de pérdida')
+plt.plot(history.history['loss'])
 plt.show()
