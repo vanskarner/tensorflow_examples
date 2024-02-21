@@ -20,7 +20,7 @@ model.compile(
     optimizer=tf.optimizers.Adam(0.09),
     loss=tf.losses.MeanSquaredError()
 )
-history: tf.keras.callbacks.History = model.fit(
+HISTORY: tf.keras.callbacks.History = model.fit(
     x=celsius_train,
     y=fahrenheit_train,
     epochs=150,
@@ -35,5 +35,5 @@ model.save(filepath=filepath)
 # ------------ Gráfica del entrenamiento ------------
 plt.xlabel('# Epocas')
 plt.ylabel('# Magnitud de pérdida')
-plt.plot(history.history['loss'])
+plt.plot(HISTORY.history['loss'])
 plt.show()
