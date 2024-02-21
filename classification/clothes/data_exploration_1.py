@@ -17,7 +17,7 @@ for image, label_index in train_data.take(1):
     plt.colorbar()
     plt.grid(visible=False)
     plt.show()
-# ------------ Mostrar varios elemento ------------
+# ------------ Mostrar varios elementos ------------
 rows, columns = (5, 5)
 plt.figure(figsize=(10, 10))
 plt.suptitle('Several Item')
