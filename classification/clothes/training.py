@@ -31,7 +31,7 @@ layers = [entry_layer, hidden_layer1, hidden_layer2, output_layer]
 model = tf.keras.Sequential(layers=layers, name="clothing_classifier")
 model.compile(optimizer=tf.optimizers.Adam(
 ), loss=tf.keras.losses.SparseCategoricalCrossentropy(), metrics=['accuracy'])
-HISTORY = model.fit(train_data, epochs=10, steps_per_epoch=math.ceil(
+HISTORY = model.fit(train_data, epochs=2, steps_per_epoch=math.ceil(
     num_examples/LOTSIZE), validation_data=test_data)
 model.evaluate(test_data)
 
