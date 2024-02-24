@@ -14,32 +14,27 @@ model: tf.keras.Sequential = tf.keras.models.load_model(filepath=filepath)
 model.summary()
 
 # Preparación de data
-data, metadata = tfds.load('fashion_mnist', as_supervised=True, with_info=True)
+configdata = {
+    'name': 'fashion_mnist',
+    'batch_size': 25,
+    'as_supervised': True,
+    'with_info': True
+}
+data, metadata = tfds.load(
+    name=configdata['name'],
+    batch_size=configdata['batch_size'],
+    as_supervised=configdata['as_supervised'],
+    with_info=configdata['with_info'])
 test_data = cast(tf.data.Dataset, data['test'])
 categories_tests = metadata.features['label'].names
-test_data = test_data.map(map_func=lambda image, label: (
-    tf.cast(image, tf.float32)/255, label))
-LOTSIZE = 25
 num_examples = metadata.splits["test"].num_examples
-test_data = test_data.cache().shuffle(num_examples).batch(LOTSIZE)
+test_data = test_data.cache().shuffle(num_examples)
 
-# Ejecución de predicciones
-primerLote = test_data.take(1).as_numpy_iterator()
-images_test, labels_test = next(primerLote)
+firstBatch = test_data.take(1)
+images_test, labels_test = next(firstBatch.as_numpy_iterator())
 predicctions = model.predict(images_test)
 
-# for images_test, labels_test in test_data.take(1):
-#     images_test = images_test.numpy()
-#     labels_test = labels_test.numpy()
-#     predicctions = model.predict(images_test)
-
-# firstBatch = next(iter(test_data))
-# images_test, labels_test = firstBatch
-# images_test = images_test.numpy()
-# labels_test = labels_test.numpy()
-# predicctions = model.predict(images_test)
-
-#------------ Gráfica de la predicción ------------
+# ------------ Gráfica de la predicción ------------
 ROWS, COLUMNS = (5, 5)
 NUM_IMAGES = ROWS*COLUMNS
 plt.figure(figsize=(2*2*COLUMNS, 2*ROWS))
