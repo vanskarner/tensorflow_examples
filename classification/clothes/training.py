@@ -32,7 +32,7 @@ configmodel = {
     'optimizer': tf.optimizers.Adam(),
     'loss': tf.keras.losses.SparseCategoricalCrossentropy(),
     'metrics': ['accuracy'],
-    'epochs': 2,
+    'epochs': 10,
     'steps_per_epoch': math.ceil(num_examples/LOTSIZE),
     'train_data': train_data,
     'validation_data': test_data
