@@ -3,8 +3,8 @@ import os
 import math
 from typing import cast
 import matplotlib.pyplot as plt
+import tensorflow_datasets as tfds
 import tensorflow as tf
-import tensorflow_datasets as tfds  # pylint: disable=C0411
 
 # Preparación de data
 data, metadata = tfds.load('fashion_mnist', as_supervised=True, with_info=True)
@@ -28,12 +28,33 @@ output_layer = tf.keras.layers.Dense(units=10, activation=tf.nn.softmax)
 layers = [entry_layer, hidden_layer1, hidden_layer2, output_layer]
 
 # Preparación del modelo
+configmodel = {
+    'optimizer': tf.optimizers.Adam(),
+    'loss': tf.keras.losses.SparseCategoricalCrossentropy(),
+    'metrics': ['accuracy'],
+    'epochs': 2,
+    'steps_per_epoch': math.ceil(num_examples/LOTSIZE),
+    'train_data': train_data,
+    'validation_data': test_data
+}
 model = tf.keras.Sequential(layers=layers, name="clothing_classifier")
-model.compile(optimizer=tf.optimizers.Adam(
-), loss=tf.keras.losses.SparseCategoricalCrossentropy(), metrics=['accuracy'])
-HISTORY = model.fit(train_data, epochs=10, steps_per_epoch=math.ceil(
-    num_examples/LOTSIZE), validation_data=test_data)
-evaluation = model.evaluate(test_data)
+model.compile(optimizer=configmodel['optimizer'],
+              loss=configmodel['loss'],
+              metrics=configmodel['metrics'])
+HISTORY = model.fit(
+    x=configmodel['train_data'],
+    epochs=configmodel['epochs'],
+    steps_per_epoch=configmodel['steps_per_epoch'],
+    validation_data=configmodel['validation_data'])
+evaluation = model.evaluate(x=configmodel['validation_data'])
+statisticsmodel = {
+    'accuracy': HISTORY.history['accuracy'],
+    'val_accuracy': HISTORY.history['val_accuracy'],
+    'loss': HISTORY.history['loss'],
+    'val_loss': HISTORY.history['val_loss'],
+    'loss_evaluation': round(evaluation[0], 4),
+    'accuracy_evaluation': round(evaluation[1], 4)
+}
 
 # Guardar modelo
 path = os.path.dirname(os.path.abspath(__file__))
@@ -45,28 +66,25 @@ model.save(filepath=filepath)
 rows, columns = (1, 2)
 model_evaluation = f"""
 Model evaluation:
-loss: {round(evaluation[0],4)} | accuracy: {round(evaluation[1],4)}
+loss: {statisticsmodel['loss_evaluation']} | accuracy: {statisticsmodel['accuracy_evaluation']}
 """
 plt.figure(num='Training Result', figsize=(12, 6))
 plt.suptitle(model_evaluation)
 
 # Subgráfico 1:
-accuracy, val_accuracy = (
-    HISTORY.history['accuracy'], HISTORY.history['val_accuracy'])
 plt.subplot(rows, columns, 1)
 plt.title('Training and Validation Accuracy')
-plt.plot(accuracy, label='Training Accuracy')
-plt.plot(val_accuracy, label='Validation Accuracy')
+plt.plot(statisticsmodel['accuracy'], label='Training Accuracy')
+plt.plot(statisticsmodel['val_accuracy'], label='Validation Accuracy')
 plt.xlabel('Epoch')
 plt.ylabel('Accuracy')
 plt.legend(loc='lower right')
 
 # Subgráfico 2:
-loss, val_loss = (HISTORY.history['loss'], HISTORY.history['val_loss'])
 plt.subplot(rows, columns, 2)
 plt.title('Training and Validation Loss')
-plt.plot(loss, label='Training Loss')
-plt.plot(val_loss, label='Validation Loss')
+plt.plot(statisticsmodel['loss'], label='Training Loss')
+plt.plot(statisticsmodel['val_loss'], label='Validation Loss')
 plt.xlabel('Epoch')
 plt.ylabel('Loss')
 plt.legend(loc='upper right')
