@@ -29,6 +29,8 @@ layers = [entry_layer, hidden_layer1, hidden_layer2, output_layer]
 
 # Preparación del modelo
 configmodel = {
+    'name': 'clothing_classifier',
+    'layers': layers,
     'optimizer': tf.optimizers.Adam(),
     'loss': tf.keras.losses.SparseCategoricalCrossentropy(),
     'metrics': ['accuracy'],
@@ -37,7 +39,8 @@ configmodel = {
     'train_data': train_data,
     'validation_data': test_data
 }
-model = tf.keras.Sequential(layers=layers, name="clothing_classifier")
+model = tf.keras.Sequential(name=configmodel['name'],
+                            layers=configmodel['layers'])
 model.compile(optimizer=configmodel['optimizer'],
               loss=configmodel['loss'],
               metrics=configmodel['metrics'])
