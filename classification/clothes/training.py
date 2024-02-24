@@ -31,9 +31,9 @@ layers = [entry_layer, hidden_layer1, hidden_layer2, output_layer]
 model = tf.keras.Sequential(layers=layers, name="clothing_classifier")
 model.compile(optimizer=tf.optimizers.Adam(
 ), loss=tf.keras.losses.SparseCategoricalCrossentropy(), metrics=['accuracy'])
-HISTORY = model.fit(train_data, epochs=2, steps_per_epoch=math.ceil(
+HISTORY = model.fit(train_data, epochs=10, steps_per_epoch=math.ceil(
     num_examples/LOTSIZE), validation_data=test_data)
-model.evaluate(test_data)
+evaluation = model.evaluate(test_data)
 
 # Guardar modelo
 path = os.path.dirname(os.path.abspath(__file__))
@@ -43,8 +43,12 @@ model.save(filepath=filepath)
 
 # ------------ Gráfica del entrenamiento ------------
 rows, columns = (1, 2)
-WINDOW_TITLE = 'Training Result'
-plt.figure(num=WINDOW_TITLE, figsize=(12, 4))
+model_evaluation = f"""
+Model evaluation:
+loss: {round(evaluation[0],4)} | accuracy: {round(evaluation[1],4)}
+"""
+plt.figure(num='Training Result', figsize=(12, 6))
+plt.suptitle(model_evaluation)
 
 # Subgráfico 1:
 accuracy, val_accuracy = (
@@ -67,5 +71,6 @@ plt.xlabel('Epoch')
 plt.ylabel('Loss')
 plt.legend(loc='upper right')
 
-plt.subplots_adjust(wspace=0.5)
+plt.tight_layout()
+plt.subplots_adjust(wspace=0.2)
 plt.show()
