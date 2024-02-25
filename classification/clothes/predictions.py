@@ -19,11 +19,11 @@ data, metadata = tfds.load(
     as_supervised=configdata['as_supervised'],
     with_info=configdata['with_info'])
 test_data = cast(tf.data.Dataset, data['test'])
-categories = metadata.features['label'].names
 num_examples = metadata.splits["test"].num_examples
 test_data = test_data.cache().shuffle(num_examples)
 firstBatch = test_data.take(1)
 images, labels = next(firstBatch.as_numpy_iterator())
+categories = metadata.features['label'].names
 
 # Cargar modelo guardado y ejecutar predicciones
 MODEL_NAME = "ClothingClassifier.keras"
