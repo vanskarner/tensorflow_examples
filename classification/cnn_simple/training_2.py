@@ -1,6 +1,6 @@
 """
 Entrenamiento del modelo
-Primera forma usando solo el datasets de tensorflow
+Segunda forma usando tensorflow_datasets
 """
 import os
 from typing import cast
