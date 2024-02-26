@@ -35,18 +35,21 @@ info_data = {
     'image_count': image_count,
     'categories': categories
 }
-# ------------------------- PREPARACIÓN DE DATASET -------------------------
-# list_ds contiene todas las rutas de las imagenes, por lo que hay 3670 rutas en un objeto tensorflow
+# ------------------------ PREPARACIÓN DE DATASET ------------------------
+# Crea un Dataset que contiene una lista de archivos.
 list_ds = tf.data.Dataset.list_files(
     str(info_data['data_dir']/'*/*'), shuffle=False)
+
+# Baraja aleatoriamente los elementos del conjunto de datos list_ds, el parámetro
+# 'reshuffle_each_iteration' garantiza que la barajada no se realice en cada iteración.
 list_ds = list_ds.shuffle(
     info_data['image_count'], reshuffle_each_iteration=False)
 
-# Division del dataset en entrenamiento y validacion(test)
+# Divide 'list_ds' en dataset de entrenamiento y validación, usando el 20%
+# para validación. El conjunto de entrenamiento omite los primeros 'val_size'
+# elementos, mientras que el de validación los toma.
 val_size = int(info_data['image_count'] * 0.2)
-# El dataset de entrenamiento tomara los elementos despues de los primeros 734 elementos
 train_ds = list_ds.skip(val_size)
-# El dataset de validacion toma los primeros 734 elementos
 val_ds = list_ds.take(val_size)
 
 batch_size = 32
@@ -56,7 +59,7 @@ img_width = 180
 AUTOTUNE = tf.data.AUTOTUNE
 
 
-def get_label(file_path):
+def get_label(file_path, class_names):
     """
     Obtiene la etiqueta para una imagen dada su ruta de archivo.
 
@@ -67,11 +70,11 @@ def get_label(file_path):
         int: La etiqueta de la imagen, codificada como un entero.
     """
     parts = tf.strings.split(file_path, os.path.sep)
-    one_hot = parts[-2] == info_data['categories']
+    one_hot = parts[-2] == class_names
     return tf.argmax(one_hot)
 
 
-def decode_img(img):
+def decode_img(img, size):
     """
     Decodifica una imagen comprimida en formato JPEG y la redimensiona al tamaño deseado.
 
@@ -82,7 +85,7 @@ def decode_img(img):
         tf.Tensor: La imagen decodificada y redimensionada como un tensor.
     """
     img = tf.io.decode_jpeg(img, channels=3)
-    return tf.image.resize(img, [img_height, img_width])
+    return tf.image.resize(img, size)
 
 
 def process_path(file_path):
@@ -95,9 +98,9 @@ def process_path(file_path):
     Retorna:
         tuple: Una tupla que contiene la imagen decodificada y redimensionada, y su etiqueta.
     """
-    label = get_label(file_path)
+    label = get_label(file_path, info_data['categories'])
     img = tf.io.read_file(file_path)
-    img = decode_img(img)
+    img = decode_img(img, [img_height, img_width])
     return img, label
 
 
@@ -121,6 +124,7 @@ val_ds = configure_for_performance(val_ds)
 image_batch, label_batch = next(iter(train_ds))
 
 # ------------------------- MOSTRAR INFORMACION DEL DATASET CREADO -------------------------
+
 plt.figure(figsize=(10, 10))
 for i in range(9):
     ax = plt.subplot(3, 3, i + 1)
