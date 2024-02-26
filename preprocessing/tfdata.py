@@ -36,12 +36,6 @@ info_data = {
     'categories': categories
 }
 # ------------------------- PREPARACIÓN DE DATASET -------------------------
-batch_size = 32
-img_height = 180
-img_width = 180
-
-AUTOTUNE = tf.data.AUTOTUNE
-
 # list_ds contiene todas las rutas de las imagenes, por lo que hay 3670 rutas en un objeto tensorflow
 list_ds = tf.data.Dataset.list_files(
     str(info_data['data_dir']/'*/*'), shuffle=False)
@@ -55,26 +49,53 @@ train_ds = list_ds.skip(val_size)
 # El dataset de validacion toma los primeros 734 elementos
 val_ds = list_ds.take(val_size)
 
+batch_size = 32
+img_height = 180
+img_width = 180
+
+AUTOTUNE = tf.data.AUTOTUNE
+
 
 def get_label(file_path):
-    # Convert the path to a list of path components
+    """
+    Obtiene la etiqueta para una imagen dada su ruta de archivo.
+
+    Parámetros:
+        file_path (str): La ruta de archivo de la imagen.
+
+    Retorna:
+        int: La etiqueta de la imagen, codificada como un entero.
+    """
     parts = tf.strings.split(file_path, os.path.sep)
-    # The second to last is the class-directory
     one_hot = parts[-2] == info_data['categories']
-    # Integer encode the label
     return tf.argmax(one_hot)
 
 
 def decode_img(img):
-    # Convert the compressed string to a 3D uint8 tensor
+    """
+    Decodifica una imagen comprimida en formato JPEG y la redimensiona al tamaño deseado.
+
+    Parámetros:
+        img (str): La imagen comprimida en formato JPEG.
+
+    Retorna:
+        tf.Tensor: La imagen decodificada y redimensionada como un tensor.
+    """
     img = tf.io.decode_jpeg(img, channels=3)
-    # Resize the image to the desired size
     return tf.image.resize(img, [img_height, img_width])
 
 
 def process_path(file_path):
+    """
+    Procesa la ruta de archivo de una imagen, obteniendo su etiqueta y cargando la imagen.
+
+    Parámetros:
+        file_path (str): La ruta de archivo de la imagen.
+
+    Retorna:
+        tuple: Una tupla que contiene la imagen decodificada y redimensionada, y su etiqueta.
+    """
     label = get_label(file_path)
-    # Load the raw data from the file as a string
     img = tf.io.read_file(file_path)
     img = decode_img(img)
     return img, label
@@ -98,12 +119,13 @@ train_ds = configure_for_performance(train_ds)
 val_ds = configure_for_performance(val_ds)
 
 image_batch, label_batch = next(iter(train_ds))
+
+# ------------------------- MOSTRAR INFORMACION DEL DATASET CREADO -------------------------
 plt.figure(figsize=(10, 10))
 for i in range(9):
     ax = plt.subplot(3, 3, i + 1)
     plt.imshow(image_batch[i].numpy().astype("uint8"))
     label = label_batch[i]
-    # plt.title(categories[label])
     plt.title(info_data['categories'][label])
     plt.axis("off")
 plt.show()
