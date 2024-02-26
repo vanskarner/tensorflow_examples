@@ -45,18 +45,11 @@ list_ds = tf.data.Dataset.list_files(
 list_ds = list_ds.shuffle(
     info_data['image_count'], reshuffle_each_iteration=False)
 
-# Divide 'list_ds' en dataset de entrenamiento y validación, usando el 20%
-# para validación. El conjunto de entrenamiento omite los primeros 'val_size'
-# elementos, mientras que el de validación los toma.
+# Divide 'list_ds' en dataset de entrenamiento y validación, usando el 20% de los
+# primeros para validación y el resto para entrenamiento.
 val_size = int(info_data['image_count'] * 0.2)
 train_ds = list_ds.skip(val_size)
 val_ds = list_ds.take(val_size)
-
-batch_size = 32
-img_height = 180
-img_width = 180
-
-AUTOTUNE = tf.data.AUTOTUNE
 
 
 def get_label(file_path, class_names):
@@ -98,25 +91,35 @@ def process_path(file_path):
     Retorna:
         tuple: Una tupla que contiene la imagen decodificada y redimensionada, y su etiqueta.
     """
-    label = get_label(file_path, info_data['categories'])
+    img_height, img_width = (180, 180)
+    image_size = [img_height, img_width]
+    image_label = get_label(file_path, info_data['categories'])
     img = tf.io.read_file(file_path)
-    img = decode_img(img, [img_height, img_width])
-    return img, label
+    img = decode_img(img, image_size)
+    return img, image_label
 
 
 # Use Dataset.map para crear un conjunto de datos de pares de image, label :
 # Set `num_parallel_calls` so multiple images are loaded/processed in parallel.
-train_ds = train_ds.map(process_path, num_parallel_calls=AUTOTUNE)
-val_ds = val_ds.map(process_path, num_parallel_calls=AUTOTUNE)
+train_ds = train_ds.map(process_path, num_parallel_calls=tf.data.AUTOTUNE)
+val_ds = val_ds.map(process_path, num_parallel_calls=tf.data.AUTOTUNE)
 
+def configure_for_performance(dataset):
+    """
+    Configura un conjunto de datos para un mejor rendimiento durante el entrenamiento del modelo.
 
-def configure_for_performance(ds):
-    ds = ds.cache()
-    ds = ds.shuffle(buffer_size=1000)
-    ds = ds.batch(batch_size)
-    ds = ds.prefetch(buffer_size=AUTOTUNE)
-    return ds
+    Parámetros:
+        ds (tf.data.Dataset): El conjunto de datos a configurar.
 
+    Retorna:
+        tf.data.Dataset: El conjunto de datos configurado para un mejor rendimiento.
+    """
+    shuffle_buffer, batch_size = (1000, 32)
+    dataset = dataset.cache()
+    dataset = dataset.shuffle(buffer_size=shuffle_buffer)
+    dataset = dataset.batch(batch_size)
+    dataset = dataset.prefetch(buffer_size=tf.data.AUTOTUNE)
+    return dataset
 
 train_ds = configure_for_performance(train_ds)
 val_ds = configure_for_performance(val_ds)
@@ -124,7 +127,7 @@ val_ds = configure_for_performance(val_ds)
 image_batch, label_batch = next(iter(train_ds))
 
 # ------------------------- MOSTRAR INFORMACION DEL DATASET CREADO -------------------------
-
+# Requiere que un dataset para graficar
 plt.figure(figsize=(10, 10))
 for i in range(9):
     ax = plt.subplot(3, 3, i + 1)
