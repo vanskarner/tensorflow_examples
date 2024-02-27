@@ -18,9 +18,9 @@ predictions = model.predict(x=celsius_test, use_multiprocessing=True)
 
 # ------------ Gráfica de la predicción ------------
 plt.figure(figsize=(8, 6))
-plt.suptitle('Datos de prueba y predicciones del modelo')
-plt.plot(celsius_test, fahrenheit_test, 'g-', label='Datos de prueba')
-plt.plot(celsius_test, predictions, 'b-', label='Predicciones')
+plt.suptitle('Test data and model predictions')
+plt.plot(celsius_test, fahrenheit_test, 'g-', label='Test data')
+plt.plot(celsius_test, predictions, 'b-', label='Predictions')
 plt.xlim(21.44, 21.58)  # Limitamos el eje x
 plt.ylim(70.64, 70.80)  # Limitamos el eje y
 plt.xlabel('Celsius')
