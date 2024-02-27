@@ -133,6 +133,18 @@ val_ds = configure_for_performance(val_ds)
 # ------------------------ GRÁFICA DE DATASET ------------------------
 image_batch, label_batch = next(iter(train_ds))
 plt.figure(figsize=(10, 10))
+plt.suptitle('Train DS')
+for i in range(9):
+    ax = plt.subplot(3, 3, i + 1)
+    plt.imshow(image_batch[i].numpy().astype("uint8"))
+    label = label_batch[i]
+    plt.title(info_data['categories'][label])
+    plt.axis("off")
+plt.show()
+
+image_batch, label_batch = next(iter(val_ds))
+plt.figure(figsize=(10, 10))
+plt.suptitle('Validation DS')
 for i in range(9):
     ax = plt.subplot(3, 3, i + 1)
     plt.imshow(image_batch[i].numpy().astype("uint8"))
