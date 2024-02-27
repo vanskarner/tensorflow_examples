@@ -36,7 +36,9 @@ model.compile(optimizer=tf.optimizers.Adam(),
               metrics=['accuracy'])
 HISTORY = model.fit(x=train_images, y=train_labels, epochs=10,
                     validation_data=(test_images, test_labels))
-model.evaluate(test_images,  test_labels, verbose=2)
+evaluation = model.evaluate(test_images,  test_labels, verbose=2)
+loss_evaluation = round(evaluation[0], 4)
+accuracy_evaluation = round(evaluation[1], 4)
 
 # Guardar modelo
 path = os.path.dirname(os.path.abspath(__file__))
@@ -45,17 +47,33 @@ filepath = os.path.join(path, MODEL_NAME)
 model.save(filepath=filepath)
 
 # ------------ Gráfica del entrenamiento ------------
-# Gráfico 1
-plt.plot(HISTORY.history['accuracy'], label='accuracy')
-plt.plot(HISTORY.history['val_accuracy'], label='val_accuracy')
+rows, columns = (1, 2)
+model_evaluation = f"""
+Model evaluation:
+loss: {loss_evaluation} | accuracy: {accuracy_evaluation}
+"""
+plt.figure(num='Training Result', figsize=(12, 6))
+plt.suptitle(model_evaluation)
+
+# Subgráfico 1
+plt.subplot(rows, columns, 1)
+plt.title('Training and Validation Accuracy')
+plt.plot(HISTORY.history['accuracy'], label='Training Accuracy')
+plt.plot(HISTORY.history['val_accuracy'], label='Validation Accuracy')
 plt.xlabel('Epoch')
 plt.ylabel('Accuracy')
 plt.ylim([0.5, 1])
 plt.legend(loc='lower right')
-plt.show()
 
-# Gráfico 2
-plt.xlabel("# Época")
-plt.ylabel("Magnitud de pérdida")
-plt.plot(HISTORY.history["loss"])
+# Subgráfico 2
+plt.subplot(rows, columns, 2)
+plt.title('Training and Validation Loss')
+plt.plot(HISTORY.history['loss'], label='Training Loss')
+plt.plot(HISTORY.history['val_loss'], label='Validation Loss')
+plt.xlabel("Epoch")
+plt.ylabel('Loss')
+plt.legend(loc='upper right')
+
+plt.tight_layout()
+plt.subplots_adjust(wspace=0.2)
 plt.show()

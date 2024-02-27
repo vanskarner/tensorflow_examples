@@ -55,8 +55,11 @@ model.compile(optimizer=tf.optimizers.Adam(),
 HISTORY = model.fit(train_data, epochs=10,
                     validation_data=test_data)
 
+
 # Evaluación del modelo
-model.evaluate(test_data, verbose=2)
+evaluation = model.evaluate(test_data, verbose=2)
+loss_evaluation = round(evaluation[0], 4)
+accuracy_evaluation = round(evaluation[1], 4)
 
 # Guardar el modelo
 path = os.path.dirname(os.path.abspath(__file__))
@@ -64,18 +67,33 @@ MODEL_NAME = "CIFAR10_Model2.keras"
 filepath = os.path.join(path, MODEL_NAME)
 model.save(filepath=filepath)
 
-# Gráficos de entrenamiento
-# Gráfico 1
-plt.plot(HISTORY.history['accuracy'], label='accuracy')
-plt.plot(HISTORY.history['val_accuracy'], label='val_accuracy')
+# ------------ Gráfica del entrenamiento ------------
+rows, columns = (1, 2)
+model_evaluation = f"""
+Model evaluation:
+loss: {loss_evaluation} | accuracy: {accuracy_evaluation}
+"""
+plt.figure(num='Training Result', figsize=(12, 6))
+plt.suptitle(model_evaluation)
+
+# Subgráfico 1
+plt.subplot(rows, columns, 1)
+plt.title('Training and Validation Accuracy')
+plt.plot(HISTORY.history['accuracy'], label='Training Accuracy')
+plt.plot(HISTORY.history['val_accuracy'], label='Validation Accuracy')
 plt.xlabel('Epoch')
 plt.ylabel('Accuracy')
 plt.ylim([0.5, 1])
 plt.legend(loc='lower right')
-plt.show()
 
-# Gráfico 2
-plt.xlabel("# Época")
-plt.ylabel("Magnitud de pérdida")
-plt.plot(HISTORY.history["loss"])
+# Subgráfico 2
+plt.subplot(rows, columns, 2)
+plt.title('Training and Validation Loss')
+plt.plot(HISTORY.history['loss'], label='Training Loss')
+plt.plot(HISTORY.history['val_loss'], label='Validation Loss')
+plt.xlabel('Epoch')
+plt.ylabel('Loss')
+
+plt.tight_layout()
+plt.subplots_adjust(wspace=0.2)
 plt.show()
