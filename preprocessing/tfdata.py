@@ -23,7 +23,7 @@ data_dir = pathlib.Path(data_dir)
 # los archivos .jpg en todas las subcarpetas.
 image_count = len(list(data_dir.glob('*/*.jpg')))
 
-# Crea un array que contiene los nombres de todas las carpetas dentro del directorio
+# Crea un array que contiene los nombres de todas las carpetas dentro del directorio,
 # excluyendo el elemento con el nombre "LICENSE.txt"
 alguniterable = data_dir.glob('*')
 names = [item.name for item in alguniterable if item.name != "LICENSE.txt"]
@@ -58,6 +58,7 @@ def get_label(file_path, class_names):
 
     Parámetros:
         file_path (str): La ruta de archivo de la imagen.
+        class_names (list): Categorias en que se clasifican las imágenes.
 
     Retorna:
         int: La etiqueta de la imagen, codificada como un entero.
@@ -73,6 +74,7 @@ def decode_img(img, size):
 
     Parámetros:
         img (str): La imagen comprimida en formato JPEG.
+        size (list): Dimensión de la imagen
 
     Retorna:
         tf.Tensor: La imagen decodificada y redimensionada como un tensor.
@@ -99,10 +101,13 @@ def process_path(file_path):
     return img, image_label
 
 
-# Use Dataset.map para crear un conjunto de datos de pares de image, label :
-# Set `num_parallel_calls` so multiple images are loaded/processed in parallel.
+# Aplica la función process_path a los datasets de entrenamiento y validación,
+# asimismo las imagenes se cargan y procesan en paralelo
 train_ds = train_ds.map(process_path, num_parallel_calls=tf.data.AUTOTUNE)
 val_ds = val_ds.map(process_path, num_parallel_calls=tf.data.AUTOTUNE)
+
+# ------------------------ CONFIGURACIÓN DE DATASET ------------------------
+
 
 def configure_for_performance(dataset):
     """
@@ -121,13 +126,12 @@ def configure_for_performance(dataset):
     dataset = dataset.prefetch(buffer_size=tf.data.AUTOTUNE)
     return dataset
 
+
 train_ds = configure_for_performance(train_ds)
 val_ds = configure_for_performance(val_ds)
 
+# ------------------------ GRÁFICA DE DATASET ------------------------
 image_batch, label_batch = next(iter(train_ds))
-
-# ------------------------- MOSTRAR INFORMACION DEL DATASET CREADO -------------------------
-# Requiere que un dataset para graficar
 plt.figure(figsize=(10, 10))
 for i in range(9):
     ax = plt.subplot(3, 3, i + 1)
@@ -137,26 +141,40 @@ for i in range(9):
     plt.axis("off")
 plt.show()
 
-# model = tf.keras.Sequential([
-#     tf.keras.layers.Rescaling(1./255),
-#     tf.keras.layers.Conv2D(32, 3, activation='relu'),
-#     tf.keras.layers.MaxPooling2D(),
-#     tf.keras.layers.Conv2D(32, 3, activation='relu'),
-#     tf.keras.layers.MaxPooling2D(),
-#     tf.keras.layers.Conv2D(32, 3, activation='relu'),
-#     tf.keras.layers.MaxPooling2D(),
-#     tf.keras.layers.Flatten(),
-#     tf.keras.layers.Dense(128, activation='relu'),
-#     tf.keras.layers.Dense(len(class_names))
-# ])
+# ------------------------ ENTRENAMIENTO DE CNN CON EL DATASET ------------------------
 
-# model.compile(
-#     optimizer='adam',
-#     loss=tf.losses.SparseCategoricalCrossentropy(from_logits=True),
-#     metrics=['accuracy'])
+# Define un modelo de red neuronal convolucional utilizando la API Sequential de TensorFlow Keras
+model = tf.keras.Sequential([
+    # Normaliza los valores de píxeles de las imágenes al rango [0, 1] dividiendo por 255
+    tf.keras.layers.Rescaling(1./255),
+    # Capa convolucional con 32 filtros de tamaño 3x3 y función de activación ReLU
+    tf.keras.layers.Conv2D(32, 3, activation='relu'),
+    # Capa de agrupación máxima para reducir el tamaño de la imagen
+    tf.keras.layers.MaxPooling2D(),
+    # Repetición de las capas convolucionales y de agrupación para extraer características
+    tf.keras.layers.Conv2D(32, 3, activation='relu'),
+    tf.keras.layers.MaxPooling2D(),
+    tf.keras.layers.Conv2D(32, 3, activation='relu'),
+    tf.keras.layers.MaxPooling2D(),
+    # Capa que aplana la salida de la última capa convolucional para alimentarla a una capa densa
+    tf.keras.layers.Flatten(),
+    # Capa densa con 128 unidades y función de activación ReLU
+    tf.keras.layers.Dense(128, activation='relu'),
+    # Capa densa de salida con un número de unidades igual al número de clases en el conjunto de datos
+    tf.keras.layers.Dense(len(categories))
+])
 
-# model.fit(
-#     train_ds,
-#     validation_data=val_ds,
-#     epochs=3
-# )
+# Compila el modelo con el optimizador 'adam', la función de pérdida y la métrica de precisión.
+model.compile(
+    optimizer='adam',
+    loss=tf.losses.SparseCategoricalCrossentropy(from_logits=True),
+    metrics=['accuracy'])
+
+# Entrena el modelo con datos de entrenamiento y validación durante 3 épocas.
+model.fit(
+    train_ds,
+    validation_data=val_ds,
+    epochs=3)
+
+# Evaluación del modelo
+model.evaluate(val_ds)
