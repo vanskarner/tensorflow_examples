@@ -131,6 +131,7 @@ train_ds = configure_for_performance(train_ds)
 val_ds = configure_for_performance(val_ds)
 
 # ------------------------ GRÁFICA DE DATASET ------------------------
+## Muestra 9 elementos del dataset de entrenamiento
 image_batch, label_batch = next(iter(train_ds))
 plt.figure(figsize=(10, 10))
 plt.suptitle('Train DS')
@@ -142,6 +143,7 @@ for i in range(9):
     plt.axis("off")
 plt.show()
 
+# Muestra 9 elementos del dataset de validación
 image_batch, label_batch = next(iter(val_ds))
 plt.figure(figsize=(10, 10))
 plt.suptitle('Validation DS')
