@@ -1,6 +1,7 @@
 """
 Entrenamiento del modelo
-Primera forma usando solo el datasets de tensorflow
+Primera forma usando el datasets de keras
+https://keras.io/api/datasets/
 """
 import os
 import matplotlib.pyplot as plt
