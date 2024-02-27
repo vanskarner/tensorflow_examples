@@ -93,6 +93,7 @@ plt.plot(HISTORY.history['loss'], label='Training Loss')
 plt.plot(HISTORY.history['val_loss'], label='Validation Loss')
 plt.xlabel('Epoch')
 plt.ylabel('Loss')
+plt.legend(loc='upper right')
 
 plt.tight_layout()
 plt.subplots_adjust(wspace=0.2)
