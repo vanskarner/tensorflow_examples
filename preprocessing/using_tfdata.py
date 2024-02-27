@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import tensorflow as tf
 
-# ------------------------- OBTENER LA DATA -------------------------
+# ------------------------- OBTENCIÓN DE DATA -------------------------
 # Descarga el archivo flower_photos.tgz desde la URL proporcionada
 URL = 'https://storage.googleapis.com/download.tensorflow.org/example_images/flower_photos.tgz'
 data_dir = tf.keras.utils.get_file(
@@ -143,38 +143,38 @@ plt.show()
 
 # ------------------------ ENTRENAMIENTO DE CNN CON EL DATASET ------------------------
 
-# Define un modelo de red neuronal convolucional utilizando la API Sequential de TensorFlow Keras
-model = tf.keras.Sequential([
-    # Normaliza los valores de píxeles de las imágenes al rango [0, 1] dividiendo por 255
-    tf.keras.layers.Rescaling(1./255),
-    # Capa convolucional con 32 filtros de tamaño 3x3 y función de activación ReLU
-    tf.keras.layers.Conv2D(32, 3, activation='relu'),
-    # Capa de agrupación máxima para reducir el tamaño de la imagen
-    tf.keras.layers.MaxPooling2D(),
-    # Repetición de las capas convolucionales y de agrupación para extraer características
-    tf.keras.layers.Conv2D(32, 3, activation='relu'),
-    tf.keras.layers.MaxPooling2D(),
-    tf.keras.layers.Conv2D(32, 3, activation='relu'),
-    tf.keras.layers.MaxPooling2D(),
-    # Capa que aplana la salida de la última capa convolucional para alimentarla a una capa densa
-    tf.keras.layers.Flatten(),
-    # Capa densa con 128 unidades y función de activación ReLU
-    tf.keras.layers.Dense(128, activation='relu'),
-    # Capa densa de salida con un número de unidades igual al número de clases en el conjunto de datos
-    tf.keras.layers.Dense(len(categories))
-])
+# # Define un modelo de red neuronal convolucional utilizando la API Sequential de TensorFlow Keras
+# model = tf.keras.Sequential([
+#     # Normaliza los valores de píxeles de las imágenes al rango [0, 1] dividiendo por 255
+#     tf.keras.layers.Rescaling(1./255),
+#     # Capa convolucional con 32 filtros de tamaño 3x3 y función de activación ReLU
+#     tf.keras.layers.Conv2D(32, 3, activation='relu'),
+#     # Capa de agrupación máxima para reducir el tamaño de la imagen
+#     tf.keras.layers.MaxPooling2D(),
+#     # Repetición de las capas convolucionales y de agrupación para extraer características
+#     tf.keras.layers.Conv2D(32, 3, activation='relu'),
+#     tf.keras.layers.MaxPooling2D(),
+#     tf.keras.layers.Conv2D(32, 3, activation='relu'),
+#     tf.keras.layers.MaxPooling2D(),
+#     # Capa que aplana la salida de la última capa convolucional para alimentarla a una capa densa
+#     tf.keras.layers.Flatten(),
+#     # Capa densa con 128 unidades y función de activación ReLU
+#     tf.keras.layers.Dense(128, activation='relu'),
+#     # Capa densa de salida con un número de unidades igual al número de clases en el conjunto de datos
+#     tf.keras.layers.Dense(len(categories))
+# ])
 
-# Compila el modelo con el optimizador 'adam', la función de pérdida y la métrica de precisión.
-model.compile(
-    optimizer='adam',
-    loss=tf.losses.SparseCategoricalCrossentropy(from_logits=True),
-    metrics=['accuracy'])
+# # Compila el modelo con el optimizador 'adam', la función de pérdida y la métrica de precisión.
+# model.compile(
+#     optimizer='adam',
+#     loss=tf.losses.SparseCategoricalCrossentropy(from_logits=True),
+#     metrics=['accuracy'])
 
-# Entrena el modelo con datos de entrenamiento y validación durante 3 épocas.
-model.fit(
-    train_ds,
-    validation_data=val_ds,
-    epochs=3)
+# # Entrena el modelo con datos de entrenamiento y validación durante 3 épocas.
+# model.fit(
+#     train_ds,
+#     validation_data=val_ds,
+#     epochs=3)
 
-# Evaluación del modelo
-model.evaluate(val_ds)
+# # Evaluación del modelo
+# model.evaluate(val_ds)
