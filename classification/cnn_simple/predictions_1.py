@@ -34,14 +34,46 @@ plt.figure(figsize=(2*2*columns, 2*rows))
 plt.suptitle('Predictions')
 for i in range(QUANTITY):
     true_label = categories[labels[i]]
-    plt.subplot(rows, columns, i + 1)
-    plt.imshow(images[i])
-    COLOR = 'green' if true_label == predicted_labels[i] else 'red'
+    COLOR = 'blue' if true_label == predicted_labels[i] else 'red'
     title = (f"True: {true_label}\n"
              f"Predicted: {predicted_labels[i]}\n"
              f"Percentage: {predicted_percentages_max[i]* 100:.2f}%")
+    plt.subplot(rows, columns, i + 1)
+    plt.imshow(images[i])
     plt.title(title, color=COLOR)
     plt.axis('off')
+
+plt.tight_layout()
+plt.show()
+
+# Gráfica 1
+plt.figure(figsize=(2*2*columns, 2*rows))
+plt.suptitle('Predictions')
+for i in range(QUANTITY):
+    # Gráfico de la imagen y etiquetas
+    true_label = categories[labels[i]]
+    predicted_label = np.argmax(predicctions[i])
+    plt.subplot(rows, 2*columns, 2*i+1)
+    plt.grid(False)
+    plt.xticks([])
+    plt.yticks([])
+    plt.imshow(images[i])
+    COLOR = 'blue' if true_label == predicted_labels[i] else 'red'
+    xlabel = (f"{predicted_labels[i]} "
+              f"{predicted_percentages_max[i]* 100:.2f}% "
+              f"({true_label})")
+    plt.xlabel(xlabel=xlabel, color=COLOR)
+
+    # Gráfico de barras del arreglo de valores
+    plt.subplot(rows, 2*columns, 2*i+2)
+    plt.grid(False)
+    plt.xticks(range(len(categories)))
+    plt.yticks([])
+    bar_plot = plt.bar(range(len(categories)),
+                       predicted_percentages[i], color="#777777")
+    plt.ylim([0, 1])
+    bar_plot[predicted_label].set_color('red')
+    bar_plot[labels[i]].set_color('blue')
 
 plt.tight_layout()
 plt.show()
