@@ -10,6 +10,10 @@ images, labels = test_data
 categories_tests = ['airplane', 'automobile', 'bird', 'cat', 'deer',
                     'dog', 'frog', 'horse', 'ship', 'truck']
 images = images / 255.0
+QUANTITY = 25
+labels = np.array(labels).flatten()
+labels = labels[:QUANTITY]
+images = images[:QUANTITY]
 
 # Carga de modelo guardado
 path = os.path.dirname(os.path.abspath(__file__))
@@ -20,10 +24,7 @@ model: tf.keras.Sequential = tf.keras.models.load_model(filepath=filepath)
 # Ejecución de predicciones
 predicctions = model.predict(images)
 
-labels = np.array(labels).flatten()
-true_labels = [categories_tests[label] for label in labels[:25]]
-predicted_labels = [categories_tests[np.argmax(
-    pred)] for pred in predicctions[:25]]
+predicted_labels = [categories_tests[np.argmax(pred)] for pred in predicctions]
 
 # Calcular el porcentaje de cada categoría predicha
 total_predictions = len(predicted_labels)
@@ -34,10 +35,10 @@ category_percentages = {category: count / total_predictions *
 
 # Mostrar las imágenes junto con las etiquetas verdaderas, predichas y sus porcentajes
 plt.figure(figsize=(10, 10))
-for i in range(25):
+for i in range(QUANTITY):
     plt.subplot(5, 5, i + 1)
     plt.imshow(images[i])
-    true_label = true_labels[i]
+    true_label = categories_tests[labels[i]]
     predicted_label = predicted_labels[i]
     percentage = category_percentages[predicted_label]
     color = 'green' if true_label == predicted_label else 'red'
