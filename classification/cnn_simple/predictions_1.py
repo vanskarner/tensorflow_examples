@@ -7,8 +7,8 @@ import tensorflow as tf
 # Preparación de data
 _, test_data = tf.keras.datasets.cifar10.load_data()
 images, labels = test_data
-categories_tests = ['airplane', 'automobile', 'bird', 'cat', 'deer',
-                    'dog', 'frog', 'horse', 'ship', 'truck']
+categories = ['airplane', 'automobile', 'bird', 'cat', 'deer',
+              'dog', 'frog', 'horse', 'ship', 'truck']
 images = images / 255.0
 QUANTITY = 25
 labels = np.array(labels).flatten()
@@ -23,24 +23,18 @@ model: tf.keras.Sequential = tf.keras.models.load_model(filepath=filepath)
 
 # Ejecución de predicciones
 predicctions = model.predict(images)
-
-predicted_labels = [categories_tests[np.argmax(pred)] for pred in predicctions]
-
-# Calcular el porcentaje de cada categoría predicha
-total_predictions = len(predicted_labels)
-category_counts = {category: predicted_labels.count(
-    category) for category in categories_tests}
-category_percentages = {category: count / total_predictions *
-                        100 for category, count in category_counts.items()}
+predicted_percentages = [tf.nn.softmax(pred).numpy() for pred in predicctions]
+predicted_percentages_max = [np.amax(pred) for pred in predicted_percentages]
+predicted_labels = [categories[np.argmax(pred)] for pred in predicctions]
 
 # Mostrar las imágenes junto con las etiquetas verdaderas, predichas y sus porcentajes
 plt.figure(figsize=(10, 10))
 for i in range(QUANTITY):
     plt.subplot(5, 5, i + 1)
     plt.imshow(images[i])
-    true_label = categories_tests[labels[i]]
+    true_label = categories[labels[i]]
     predicted_label = predicted_labels[i]
-    percentage = category_percentages[predicted_label]
+    percentage = predicted_percentages_max[i]
     color = 'green' if true_label == predicted_label else 'red'
     plt.title(
         f'True: {true_label}\nPredicted: {predicted_label}\nPercentage: {percentage:.2f}%', color=color)
