@@ -10,7 +10,7 @@ images, labels = test_data
 categories = ['airplane', 'automobile', 'bird', 'cat', 'deer',
               'dog', 'frog', 'horse', 'ship', 'truck']
 images = images / 255.0
-QUANTITY = 25
+QUANTITY = 12
 labels = np.array(labels).flatten()
 labels = labels[:QUANTITY]
 images = images[:QUANTITY]
@@ -27,17 +27,20 @@ predicted_percentages = [tf.nn.softmax(pred).numpy() for pred in predicctions]
 predicted_percentages_max = [np.amax(pred) for pred in predicted_percentages]
 predicted_labels = [categories[np.argmax(pred)] for pred in predicctions]
 
-# Mostrar las imágenes junto con las etiquetas verdaderas, predichas y sus porcentajes
-plt.figure(figsize=(10, 10))
+# ------------ Gráfica de la predicción ------------
+# Gráfica 1
+rows, columns = (3, 4)
+plt.figure(figsize=(2*2*columns, 2*rows))
+plt.suptitle('Predictions')
 for i in range(QUANTITY):
-    plt.subplot(5, 5, i + 1)
-    plt.imshow(images[i])
     true_label = categories[labels[i]]
-    predicted_label = predicted_labels[i]
-    percentage = predicted_percentages_max[i]
-    color = 'green' if true_label == predicted_label else 'red'
-    plt.title(
-        f'True: {true_label}\nPredicted: {predicted_label}\nPercentage: {percentage:.2f}%', color=color)
+    plt.subplot(rows, columns, i + 1)
+    plt.imshow(images[i])
+    COLOR = 'green' if true_label == predicted_labels[i] else 'red'
+    title = (f"True: {true_label}\n"
+             f"Predicted: {predicted_labels[i]}\n"
+             f"Percentage: {predicted_percentages_max[i]* 100:.2f}%")
+    plt.title(title, color=COLOR)
     plt.axis('off')
 
 plt.tight_layout()
