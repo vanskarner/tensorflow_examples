@@ -1,7 +1,6 @@
 """
 Entrenamiento del modelo
-Segunda forma usando tensorflow_datasets
-https://www.tensorflow.org/datasets/catalog/overview?hl=es-419
+Usando tensorflow_datasets
 """
 import os
 from typing import cast

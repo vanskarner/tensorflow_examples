@@ -1,4 +1,7 @@
-""" Predicciones del modelo de clasificación de ropa """
+"""
+Predicciones del modelo 
+Usando tensorflow_datasets
+"""
 import os
 from typing import cast
 import matplotlib.pyplot as plt

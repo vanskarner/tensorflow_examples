@@ -1,7 +1,4 @@
-"""
-Visualización de los datos
-Segunda forma usando tensorflow_datasets
-"""
+""" Exploración del dataset de tensorflow_datasets """
 from typing import cast
 import matplotlib.pyplot as plt
 import tensorflow_datasets as tfds

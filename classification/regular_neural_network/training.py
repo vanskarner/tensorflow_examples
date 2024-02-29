@@ -1,4 +1,8 @@
-""" Entrenamiento del modelo de clasificación de ropa """
+"""
+Entrenamiento del modelo
+Usando tensorflow_datasets
+"""
+
 import os
 import math
 from typing import cast

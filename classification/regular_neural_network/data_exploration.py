@@ -1,4 +1,4 @@
-""" Exploración del set de datos usando tensorflow_datasets """
+""" Exploración del dataset de tensorflow_datasets """
 import tensorflow_datasets as tfds
 import matplotlib.pyplot as plt
 
