@@ -4,6 +4,19 @@ Conjunto de varios ejemplos simplificados sobre el uso tensorflow en cuestión d
 # Motivación
 Proporcionar una colección de ejemplos simplificados de TensorFlow que sirvan a modo de consulta para aquellos que deseen aprender o trabajar con esta potente biblioteca de aprendizaje automático. 
 
+# Especificación
+Ejecutado en Anaconda 23.9.0
+
+- Python 3.10.13
+- tensorflow 2.10.0
+- tensorflow_datasets 4.9.4
+- pip 23.3.1
+- cuda-nvcc 12.3.10
+- cudatoolkit 11.2.2
+- cudnn 8.10.77
+- numpy 1.26.4
+- matplotlib 3.8.3
+
 # Modelos Contenidos
 ## Regresión
 ### simple: Conversión de Celsius a Fahrenheit
