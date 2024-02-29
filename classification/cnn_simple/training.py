@@ -62,7 +62,7 @@ accuracy_evaluation = round(evaluation[1], 4)
 
 # Guardar el modelo
 path = os.path.dirname(os.path.abspath(__file__))
-MODEL_NAME = "CIFAR10_Model2.keras"
+MODEL_NAME = "CIFAR10_Model.keras"
 filepath = os.path.join(path, MODEL_NAME)
 model.save(filepath=filepath)
 
