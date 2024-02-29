@@ -8,7 +8,7 @@ import tensorflow as tf
 
 # Carga de modelo guardado
 path = os.path.dirname(os.path.abspath(__file__))
-MODEL_NAME = "CIFAR10_Model2.keras"
+MODEL_NAME = "CIFAR10_Model.keras"
 filepath = os.path.join(path, MODEL_NAME)
 model: tf.keras.Sequential = tf.keras.models.load_model(filepath=filepath)
 
