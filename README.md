@@ -11,9 +11,9 @@ Ejecutado en Anaconda 23.9.0
 - tensorflow 2.10.0
 - tensorflow_datasets 4.9.4
 - pip 23.3.1
-- cuda-nvcc 12.3.10
+- cuda-nvcc 12.3.107
 - cudatoolkit 11.2.2
-- cudnn 8.10.77
+- cudnn 8.1.0
 - numpy 1.26.4
 - matplotlib 3.8.3
 
